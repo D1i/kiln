@@ -1,0 +1,42 @@
+{
+  "name": "warmup",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Texture and shader warm-up demo: the same 12 objects appear in a Babylon.js scene with and without warm-up, a frame-time graph shows the difference.",
+  "license": "MIT",
+  "author": "Maxim Kalin",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --port 4173 --strictPort",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "jest",
+    "test:e2e": "playwright test",
+    "gen:textures": "node scripts/generate-textures.mjs"
+  },
+  "dependencies": {
+    "@babylonjs/core": "^8.56.2"
+  },
+  "devDependencies": {
+    "@babylonjs/ktx2decoder": "^8.56.2",
+    "@eslint/js": "^9.39.5",
+    "@playwright/test": "^1.64.1",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.0.0",
+    "eslint": "^9.39.5",
+    "jest": "^30.5.2",
+    "jest-environment-jsdom": "^30.5.2",
+    "prettier": "^3.9.10",
+    "ts-jest": "^29.4.15",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.72.0",
+    "vite": "^7.3.7"
+  },
+  "engines": {
+    "node": ">=20.19"
+  }
+}
