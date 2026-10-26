@@ -1,0 +1,241 @@
+:root {
+  --bg: #0e1117;
+  --panel: rgba(16, 20, 28, 0.86);
+  --border: #273041;
+  --text: #e6e9ef;
+  --muted: #8b93a3;
+  --accent: #8098f9;
+  --accent-2: #6172f3;
+  --ok: #4ade80;
+  --warn: #fbbf24;
+  --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  overflow: hidden;
+  color-scheme: dark;
+}
+#view {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  outline: none;
+  touch-action: none;
+}
+
+.hud {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  width: 340px;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px 12px;
+  backdrop-filter: blur(10px);
+  font-size: 12.5px;
+  line-height: 1.4;
+  display: grid;
+  gap: 10px;
+}
+.hud-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.hud-title {
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.01em;
+}
+.hud-rows {
+  display: grid;
+  gap: 4px;
+  user-select: none;
+}
+.hud-rows > div {
+  display: grid;
+  grid-template-columns: 78px 1fr;
+  gap: 8px;
+}
+.hud-rows span {
+  color: var(--muted);
+}
+.hud-rows b {
+  font-weight: 500;
+  font-family: var(--mono);
+  font-size: 11.5px;
+}
+.hud-sub {
+  color: var(--muted);
+  font-size: 11px;
+}
+.hud-help {
+  color: var(--muted);
+  font-size: 11px;
+}
+.hud-status {
+  font-family: var(--mono);
+  font-size: 11px;
+  white-space: pre-wrap;
+}
+.hud-status:empty {
+  display: none;
+}
+
+.btn {
+  font: inherit;
+  font-weight: 500;
+  background: var(--accent-2);
+  color: #fff;
+  border: 0;
+  border-radius: 8px;
+  padding: 7px 10px;
+  cursor: pointer;
+}
+.btn:hover {
+  background: var(--accent);
+}
+.btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.btn:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+.btn.ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.btn.ghost:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: rgba(128, 152, 249, 0.08);
+}
+.row {
+  display: flex;
+  gap: 8px;
+}
+.row .btn:first-child {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.peaks {
+  display: grid;
+  gap: 2px;
+  font-size: 11.5px;
+}
+.peaks-row {
+  display: grid;
+  grid-template-columns: 1fr 64px 64px;
+  gap: 8px;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.peaks-row b {
+  font-family: var(--mono);
+  font-weight: 500;
+  text-align: right;
+}
+.peaks-row b.slow {
+  color: var(--warn);
+}
+.peaks-row.pending {
+  color: var(--muted);
+}
+.peaks-head {
+  color: var(--muted);
+  font-size: 11px;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+}
+.peaks-head span:not(:first-child) {
+  text-align: right;
+}
+
+.graph {
+  width: 100%;
+  height: 150px;
+  display: block;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+}
+.legend {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.swatch {
+  width: 12px;
+  height: 3px;
+  border-radius: 2px;
+  display: inline-block;
+}
+.swatch.cpu {
+  background: var(--accent);
+}
+.swatch.interval {
+  background: var(--muted);
+}
+
+.splash {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--mono);
+  color: var(--muted);
+  font-size: 13px;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+.splash.hidden {
+  opacity: 0;
+}
+.unsupported {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  text-align: center;
+  color: var(--warn);
+  font-family: var(--mono);
+}
+.corner {
+  position: fixed;
+  right: 16px;
+  bottom: 14px;
+  color: var(--muted);
+  font-size: 12px;
+  text-decoration: none;
+}
+.corner:hover {
+  color: var(--text);
+}

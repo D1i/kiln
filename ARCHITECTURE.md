@@ -39,6 +39,7 @@ sequenceDiagram
 | `src/metrics`   | Frame recorder, ring buffer, peak windows, A/B report              |
 | `src/bench`     | Run A/B orchestration across page reloads                          |
 | `src/ui`        | DOM panel, canvas-2D frame graph, peaks table, styles              |
+| `src/util`      | Small shared helpers (typed event emitter)                         |
 | `src/env`       | GPU and browser detection                                          |
 | `scripts`       | Offline texture generation (PNG, KTX2 through `toktx`)             |
 | `public`        | Generated textures and the KTX2 transcoder                         |
@@ -48,4 +49,5 @@ sequenceDiagram
 
 - `ui/` talks to the engine side only through typed events and app state; it never touches Babylon objects.
 - Guests are isolated: extra lights and shadows apply only to their own meshes, so one guest never changes another guest's shader variant.
+- Shader code is imported statically (`scene/shaders.ts`): Babylon would otherwise fetch it with a dynamic `import()` on first use, and the first appearance of every material would measure a network request instead of a shader compile.
 - One `Engine` per page life. Switching parallel compile and every A/B run reload the page; shaders are made unique per run so the driver's program cache cannot make the cold path look warm.

@@ -12,6 +12,14 @@ export default tseslint.config(
   },
   {
     files: ['**/*.cjs', '**/*.mjs', '*.config.js'],
-    languageOptions: { globals: { module: 'readonly', process: 'readonly', console: 'readonly' } }
+    languageOptions: {
+      globals: {
+        module: 'readonly',
+        process: 'readonly',
+        console: 'readonly',
+        Buffer: 'readonly',
+        performance: 'readonly'
+      }
+    }
   }
 );

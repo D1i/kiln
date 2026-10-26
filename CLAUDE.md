@@ -31,6 +31,7 @@ Full set before handing over a task: typecheck, lint, format:check, test, build,
 ## Conventions
 
 - TypeScript strict, `noUncheckedIndexedAccess`. Babylon imports are `@babylonjs/core/...` side-effect imports of what is used, never the UMD `babylonjs` package.
+- Every Babylon shader module a guest needs is imported statically in `src/scene/shaders.ts`; add to it when a new guest brings a new shader family, otherwise warm-up off measures a chunk download. Texture loaders (KTX2) follow the same rule.
 - The panel is plain DOM (no React). Babylon objects do not leak into `src/ui/`.
 - Each task goes in its own `git worktree`. Never push.
 - Commit style follows the other projects: `scope: summary`, a prose body.
