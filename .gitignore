@@ -1,0 +1,9 @@
+docs/
+issue/
+node_modules/
+dist/
+test-results/
+playwright-report/
+HANDOFF.md
+spec.md
+post.txt
