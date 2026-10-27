@@ -20,6 +20,7 @@ import { FrameRecorder } from './metrics/frameRecorder';
 import { createEnvironment } from './scene/environment';
 import { guestOrdinal, type GuestId } from './scene/guestCatalog';
 import { useLocalKtx2Decoder } from './scene/ktx2';
+import { prefetchTextures } from './scene/textureCache';
 import { createRunToken, uniquifyShaders } from './scene/shaderUniquifier';
 import type { TextureFormat } from './scene/textureFormat';
 import { FrameGraph } from './ui/frameGraph';
@@ -202,6 +203,15 @@ async function start(): Promise<void> {
   window.addEventListener('resize', () => engine.resize());
   engine.runRenderLoop(() => scene.render());
 
+  splash.textContent = 'loading textures…';
+  try {
+    await prefetchTextures(
+      textureUrl,
+      (done, total) => (splash.textContent = `loading textures… ${done} / ${total}`)
+    );
+  } catch (error) {
+    panel.setStatus(`Texture download failed: ${error instanceof Error ? error.message : String(error)}`);
+  }
   splash.textContent = settings.mode === 'on' ? 'warming up…' : 'loading…';
   try {
     await strategy.prepare((message) => (splash.textContent = `warming up: ${message}`));

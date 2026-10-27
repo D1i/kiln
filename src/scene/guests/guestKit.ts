@@ -7,6 +7,7 @@ import { Color3 } from '@babylonjs/core/Maths/math.color';
 import type { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 import { Texture } from '@babylonjs/core/Materials/Textures/texture';
+import { textureBuffer } from '../textureCache';
 import { TransformNode } from '@babylonjs/core/Meshes/transformNode';
 
 export interface GuestContext {
@@ -62,5 +63,8 @@ export function createMatteMaterial(context: GuestContext, name: string, color: 
 }
 
 export function loadTexture(context: GuestContext, fileName: string): Texture {
-  return new Texture(context.textureUrl(fileName), context.scene);
+  // With a prefetched buffer Babylon.js skips the network; the url still names the file, so the loader is
+  // chosen by its extension (.ktx2 goes to the KTX2 decoder) and the decode happens here, not on the loading screen.
+  const buffer = textureBuffer(fileName);
+  return new Texture(context.textureUrl(fileName), context.scene, buffer ? { buffer } : undefined);
 }
