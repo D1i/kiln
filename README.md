@@ -43,7 +43,17 @@ URL parameters: `?mode=on|off&parallel=0|1&texture=ktx2|png`.
 
 ## Numbers
 
-One machine, Windows 11, Intel Iris Xe (ANGLE / Direct3D 11), 1600×1000. Each row is one **Run A/B** with 5 runs per mode, the median per object. The runs were driven by Playwright in headless Chrome 155 and Edge 156; the page is the same one you get in a browser tab, but headless Chrome is not locked to the display's refresh rate, so the floor of the "on" peaks is the plain frame time of about 9 ms.
+**Hosted page, a browser tab on a 120 Hz display.** Windows 11, Intel Iris Xe (ANGLE / Direct3D 11), Chrome 156, 1536×770, KTX2, parallel compile on, **Run A/B** with 3 runs per mode, median per object. This is the page as deployed, after the texture prefetch and the peak-window fix described under _The measurement_:
+
+|                              | Warm-up off        | Warm-up on |
+| ---------------------------- | ------------------ | ---------- |
+| Sum of peaks over 12 objects | 877 ms             | 141 ms     |
+| Largest peak                 | 415 ms (PNG 4096²) | 16 ms      |
+| Loading screen               | 224 ms             | 1795 ms    |
+
+Peak per object, ms (off → on): no texture 20 → 10; diffuse 2048² 151 → 11; diffuse + normal 71 → 11; PBR 68 → 16; transparent 15 → 11; shadow 32 → 11; 2 lights 27 → 11; vertex colors 18 → 12; morph target 19 → 10; skinning 30 → 13; KTX2 2048² 12 → 12; PNG 4096² 415 → 12. The "on" column is twelve ordinary frames; on a 120 Hz display the floor is 8.3 ms.
+
+**Earlier sessions, headless, localhost.** Same machine, 1600×1000, taken before the two measurement fixes (the texture bytes came over localhost, so the network did not matter, and the stall of the 4096² PNG fitted inside the window). Each row is one **Run A/B** with 5 runs per mode, the median per object. The runs were driven by Playwright in headless Chrome 155 and Edge 156; the page is the same one you get in a browser tab, but headless Chrome is not locked to the display's refresh rate, so the floor of the "on" peaks is the plain frame time of about 9 ms.
 
 | Session                                | Warm-up off: sum of peaks / max peak | Warm-up on: sum of peaks / max peak | Loading, off → on |
 | -------------------------------------- | ------------------------------------ | ----------------------------------- | ----------------- |
