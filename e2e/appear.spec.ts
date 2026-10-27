@@ -124,3 +124,26 @@ test('Run A/B goes through both modes by itself, fills both columns and copies t
   expect(copied.replaceAll('\r\n', '\n')).toBe(report);
   expect(problems).toEqual([]);
 });
+
+for (const format of ['ktx2', 'png'] as const) {
+  test(`object 11 loads its ${format} texture, and everything comes from this server`, async ({
+    page,
+    baseURL
+  }) => {
+    const requested: string[] = [];
+    const foreign: string[] = [];
+    page.on('request', (request) => {
+      const url = new URL(request.url());
+      if (url.pathname.includes('/textures/basis-2048.')) requested.push(url.pathname);
+      const isFont = /(^|\.)fonts\.(googleapis|gstatic)\.com$/.test(url.hostname);
+      if (!isFont && url.origin !== new URL(baseURL ?? '').origin) foreign.push(request.url());
+    });
+    const problems = await openPage(page, `?mode=on&texture=${format}`);
+
+    await expect(page.locator('.hud > .hud-status')).toBeEmpty();
+    expect(requested.filter((path) => path.endsWith(`.${format}`))).not.toHaveLength(0);
+    expect(requested.filter((path) => !path.endsWith(`.${format}`))).toEqual([]);
+    expect(foreign).toEqual([]);
+    expect(problems).toEqual([]);
+  });
+}

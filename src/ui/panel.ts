@@ -1,4 +1,5 @@
 import { REPEAT_CHOICES, DEFAULT_REPEATS } from '../bench/abSession';
+import type { TextureFormat } from '../scene/textureFormat';
 import type { AppearState } from '../warmup/appearController';
 import type { WarmupMode } from '../warmup/appearStrategy';
 import { button, el } from './dom';
@@ -11,6 +12,7 @@ export interface PanelHandlers {
   reset(): void;
   setWarmupOn(on: boolean): void;
   setParallelCompile(on: boolean): void;
+  setTextureFormat(format: TextureFormat): void;
   runAb(repeats: number): void;
   cancelAb(): void;
   copyReport(): void;
@@ -19,6 +21,7 @@ export interface PanelHandlers {
 export interface PanelOptions {
   mode: WarmupMode;
   parallelCompile: boolean;
+  textureFormat: TextureFormat;
   /** False when the browser has no KHR_parallel_shader_compile: the checkbox is then disabled. */
   parallelCompileAvailable: boolean;
   gpu: string;
@@ -34,6 +37,7 @@ export class Panel {
   private readonly resetButton: HTMLButtonElement;
   private readonly warmupSwitch: HTMLInputElement;
   private readonly parallelCheckbox: HTMLInputElement;
+  private readonly textureSelect: HTMLSelectElement;
   private readonly repeatsSelect: HTMLSelectElement;
   private readonly runAbButton: HTMLButtonElement;
   private readonly cancelAbButton: HTMLButtonElement;
@@ -114,6 +118,22 @@ export class Panel {
       )
     );
 
+    const textureLabel = el('label', 'check');
+    this.textureSelect = el('select');
+    for (const [value, text] of [
+      ['ktx2', 'KTX2 (Basis, mips included)'],
+      ['png', 'PNG (mips built on the GPU)']
+    ] as const) {
+      const option = el('option', undefined, text);
+      option.value = value;
+      option.selected = value === options.textureFormat;
+      this.textureSelect.append(option);
+    }
+    this.textureSelect.addEventListener('change', () =>
+      handlers.setTextureFormat(this.textureSelect.value as TextureFormat)
+    );
+    textureLabel.append(document.createTextNode('Object 11 texture'), this.textureSelect);
+
     const abSection = el('div', 'hud-controls');
     this.repeatsSelect = el('select');
     for (const repeats of REPEAT_CHOICES) {
@@ -171,6 +191,7 @@ export class Panel {
       graph.element,
       legend,
       parallelLabel,
+      textureLabel,
       abSection,
       caption,
       help
@@ -214,6 +235,7 @@ export class Panel {
       control.disabled = locked;
     }
     this.parallelCheckbox.disabled = locked || !this.parallelAvailable;
+    this.textureSelect.disabled = locked;
     this.appearButton.disabled = locked || this.appearButton.dataset.exhausted === 'true';
   }
 

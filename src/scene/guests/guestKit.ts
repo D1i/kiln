@@ -2,6 +2,7 @@ import type { AbstractMesh } from '@babylonjs/core/Meshes/abstractMesh';
 import type { Material } from '@babylonjs/core/Materials/material';
 import type { ShadowGenerator } from '@babylonjs/core/Lights/Shadows/shadowGenerator';
 import type { Scene } from '@babylonjs/core/scene';
+import type { TextureFormat } from '../textureFormat';
 import { Color3 } from '@babylonjs/core/Maths/math.color';
 import type { Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
@@ -10,6 +11,7 @@ import { TransformNode } from '@babylonjs/core/Meshes/transformNode';
 
 export interface GuestContext {
   scene: Scene;
+  textureFormat: TextureFormat;
   /** Floor position of the guest's grid cell. */
   position: Vector3;
   textureUrl(fileName: string): string;

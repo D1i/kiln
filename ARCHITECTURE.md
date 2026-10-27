@@ -49,19 +49,19 @@ Every switch (mode, parallel compile) and every A/B step is a page reload, so ea
 
 ## Directories
 
-| Path            | Purpose                                                            |
-| --------------- | ------------------------------------------------------------------ |
-| `src/scene`     | Environment (floor, camera, base light) and the 12 guest factories |
-| `src/warmup`    | Material compilation, texture warm-up, appearance control          |
-| `src/metrics`   | Frame recorder, ring buffer, peak windows, A/B report              |
-| `src/bench`     | A/B plan and session, one benchmark step, median and report text   |
-| `src/app`       | URL settings, results store, storage seam                          |
-| `src/ui`        | DOM panel, canvas-2D frame graph, peaks table, styles              |
-| `src/util`      | Small shared helpers (typed event emitter)                         |
-| `src/env`       | GPU and browser detection                                          |
-| `scripts`       | Offline texture generation (PNG, KTX2 through `toktx`)             |
-| `public`        | Generated textures and the KTX2 transcoder                         |
-| `tests` / `e2e` | Jest unit tests / Playwright page-flow tests                       |
+| Path            | Purpose                                                                                     |
+| --------------- | ------------------------------------------------------------------------------------------- |
+| `src/scene`     | Environment (floor, camera, base light) and the 12 guest factories                          |
+| `src/warmup`    | Material compilation, texture warm-up, appearance control                                   |
+| `src/metrics`   | Frame recorder, ring buffer, peak windows, A/B report                                       |
+| `src/bench`     | A/B plan and session, one benchmark step, median and report text                            |
+| `src/app`       | URL settings, results store, storage seam                                                   |
+| `src/ui`        | DOM panel, canvas-2D frame graph, peaks table, styles                                       |
+| `src/util`      | Small shared helpers (typed event emitter)                                                  |
+| `src/env`       | GPU and browser detection                                                                   |
+| `scripts`       | Offline texture generation (PNG, KTX2 through `toktx`)                                      |
+| `public`        | Generated textures (`textures/`) and the self-hosted KTX2 decoder and transcoders (`ktx2/`) |
+| `tests` / `e2e` | Jest unit tests / Playwright page-flow tests                                                |
 
 ## Boundaries
 

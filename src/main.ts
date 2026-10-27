@@ -19,7 +19,9 @@ import { describeBrowser } from './env/browserInfo';
 import { FrameRecorder } from './metrics/frameRecorder';
 import { createEnvironment } from './scene/environment';
 import { guestOrdinal, type GuestId } from './scene/guestCatalog';
+import { useLocalKtx2Decoder } from './scene/ktx2';
 import { createRunToken, uniquifyShaders } from './scene/shaderUniquifier';
+import type { TextureFormat } from './scene/textureFormat';
 import { FrameGraph } from './ui/frameGraph';
 import { Panel } from './ui/panel';
 import { PeaksTable } from './ui/peaksTable';
@@ -88,11 +90,12 @@ async function start(): Promise<void> {
   engine.onBeginFrameObservable.add(() => recorder.beginFrame(performance.now()));
   engine.onEndFrameObservable.add(() => recorder.endFrame(performance.now()));
 
+  useLocalKtx2Decoder(import.meta.env.BASE_URL);
   const textureUrl = (fileName: string) => `${import.meta.env.BASE_URL}textures/${fileName}`;
   const strategy: AppearStrategy =
     settings.mode === 'on'
-      ? new EagerAppearStrategy(scene, textureUrl)
-      : new LazyAppearStrategy(scene, textureUrl);
+      ? new EagerAppearStrategy(scene, textureUrl, settings.textureFormat)
+      : new LazyAppearStrategy(scene, textureUrl, settings.textureFormat);
   const controller = new AppearController(strategy, {
     beforeAppear: (entry) =>
       recorder.markAppearance(entry.id, String(guestOrdinal(entry.id)), performance.now()),
@@ -134,6 +137,7 @@ async function start(): Promise<void> {
       },
       setWarmupOn: (on) => navigateTo({ ...settings, mode: on ? 'on' : 'off' }),
       setParallelCompile: (on) => navigateTo({ ...settings, parallelCompile: on }),
+      setTextureFormat: (format: TextureFormat) => navigateTo({ ...settings, textureFormat: format }),
       runAb: (repeats) => {
         abSession.clearReport();
         abSession.saveActive(createAbState(repeats, settings, Date.now()));
@@ -156,6 +160,7 @@ async function start(): Promise<void> {
     {
       mode: settings.mode,
       parallelCompile: settings.parallelCompile,
+      textureFormat: settings.textureFormat,
       parallelCompileAvailable,
       gpu: engine.getGlInfo().renderer,
       browser: describeBrowser(navigator.userAgent),

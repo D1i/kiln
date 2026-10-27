@@ -1,6 +1,7 @@
+import type { TextureFormat } from '../scene/textureFormat';
 import type { WarmupMode } from '../warmup/appearStrategy';
 
-export type TextureFormat = 'ktx2' | 'png';
+export type { TextureFormat };
 
 /** Everything the user can switch. Lives in the URL, so every switch is a reload into a cold page. */
 export interface DemoSettings {
@@ -9,7 +10,7 @@ export interface DemoSettings {
   textureFormat: TextureFormat;
 }
 
-export const DEFAULT_SETTINGS: DemoSettings = { mode: 'off', parallelCompile: true, textureFormat: 'png' };
+export const DEFAULT_SETTINGS: DemoSettings = { mode: 'off', parallelCompile: true, textureFormat: 'ktx2' };
 
 export function parseSettings(search: string): DemoSettings {
   const params = new URLSearchParams(search);

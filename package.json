@@ -16,7 +16,8 @@
     "format:check": "prettier --check .",
     "test": "jest",
     "test:e2e": "playwright test",
-    "gen:textures": "node scripts/generate-textures.mjs"
+    "gen:textures": "node scripts/generate-textures.mjs && node scripts/encode-ktx2.mjs",
+    "fetch:ktx2-decoder": "node scripts/fetch-ktx2-decoder.mjs"
   },
   "dependencies": {
     "@babylonjs/core": "^8.56.2"

@@ -120,8 +120,9 @@ function createHeightField(seed, baseFrequency, octaves) {
 
 const quantise = (value, step) => Math.min(255, Math.round(value / step) * step);
 
-// Film grain of +-1: keeps the images from collapsing to a few kilobytes, so the PNG decode cost is realistic.
-function createGrain(seed) {
+// Film grain of +-1 on a share of the samples: keeps the images from collapsing to a few kilobytes, so the PNG
+// decode cost is realistic, and tunes the file size (the whole set has to stay under 30 MB).
+function createGrain(seed, density = 1) {
   let state = (seed * 2654435761) >>> 0 || 1;
   return (value) => {
     state ^= state << 13;
@@ -129,14 +130,15 @@ function createGrain(seed) {
     state ^= state >>> 17;
     state ^= state << 5;
     state >>>= 0;
+    if ((state >>> 8) % 1000 >= density * 1000) return value;
     return Math.max(0, Math.min(255, value + (state % 3) - 1));
   };
 }
 
-function renderAlbedo(size, seed) {
+function renderAlbedo(size, seed, grainDensity = 1) {
   const height = createHeightField(seed, 3, 4);
   const tint = createHeightField(seed + 100, 2, 2);
-  const grain = createGrain(seed);
+  const grain = createGrain(seed, grainDensity);
   const pixels = new Uint8Array(size * size * 3);
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
@@ -201,7 +203,7 @@ const textures = [
   { file: 'pbr-albedo-1024.png', size: 1024, render: () => renderAlbedo(1024, 3) },
   { file: 'pbr-metal-rough-1024.png', size: 1024, render: () => renderMetalRough(1024, 4) },
   { file: 'basis-2048.png', size: 2048, render: () => renderAlbedo(2048, 5) },
-  { file: 'png-4096.png', size: 4096, render: () => renderAlbedo(4096, 6) }
+  { file: 'png-4096.png', size: 4096, render: () => renderAlbedo(4096, 6, 0.4) }
 ];
 
 mkdirSync(outputDirectory, { recursive: true });

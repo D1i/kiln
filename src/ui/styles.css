@@ -347,3 +347,15 @@ body {
 .hud-controls select[hidden] {
   display: none;
 }
+
+label.check select {
+  margin-left: auto;
+  font: inherit;
+  font-size: 12px;
+  background: #161b24;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 3px 6px;
+  color-scheme: dark;
+}

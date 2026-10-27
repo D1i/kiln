@@ -2,6 +2,7 @@ import type { Scene } from '@babylonjs/core/scene';
 import { createGuest } from '../scene/createGuest';
 import { GUEST_CATALOG, type GuestId } from '../scene/guestCatalog';
 import type { GuestInstance } from '../scene/guests/guestKit';
+import type { TextureFormat } from '../scene/textureFormat';
 import type { AppearStrategy } from './appearStrategy';
 import { warmUpGuests } from './warmupRunner';
 
@@ -15,13 +16,14 @@ export class EagerAppearStrategy implements AppearStrategy {
 
   constructor(
     private readonly scene: Scene,
-    private readonly textureUrl: (fileName: string) => string
+    private readonly textureUrl: (fileName: string) => string,
+    private readonly textureFormat: TextureFormat
   ) {}
 
   async prepare(onProgress: (message: string) => void): Promise<void> {
     onProgress('creating objects');
     for (const { id } of GUEST_CATALOG) {
-      const instance = createGuest(this.scene, id, this.textureUrl);
+      const instance = createGuest(this.scene, id, this.textureUrl, this.textureFormat);
       instance.root.setEnabled(false);
       this.instances.set(id, instance);
     }

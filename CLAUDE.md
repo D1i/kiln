@@ -8,17 +8,18 @@ Code, comments, UI, README and commit messages are in English (same as Tessera).
 
 ## Commands
 
-| Task                                               | Command                                                          |
-| -------------------------------------------------- | ---------------------------------------------------------------- |
-| Dev server                                         | `npm run dev` (port 5173)                                        |
-| Build (typecheck + Vite)                           | `npm run build`                                                  |
-| Preview build                                      | `npm run preview` (port 4173)                                    |
-| Typecheck                                          | `npm run typecheck`                                              |
-| Lint                                               | `npm run lint`                                                   |
-| Format                                             | `npm run format` / `npm run format:check`                        |
-| Unit tests (Jest)                                  | `npm test`                                                       |
-| E2E (Playwright, headless Chromium on SwiftShader) | `npm run test:e2e`                                               |
-| Regenerate textures                                | `npm run gen:textures` (needs `toktx` from KTX-Software on PATH) |
+| Task                                               | Command                                                                                                        |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Dev server                                         | `npm run dev` (port 5173)                                                                                      |
+| Build (typecheck + Vite)                           | `npm run build`                                                                                                |
+| Preview build                                      | `npm run preview` (port 4173)                                                                                  |
+| Typecheck                                          | `npm run typecheck`                                                                                            |
+| Lint                                               | `npm run lint`                                                                                                 |
+| Format                                             | `npm run format` / `npm run format:check`                                                                      |
+| Unit tests (Jest)                                  | `npm test`                                                                                                     |
+| E2E (Playwright, headless Chromium on SwiftShader) | `npm run test:e2e`                                                                                             |
+| Regenerate textures                                | `npm run gen:textures` (needs `toktx` from KTX-Software on PATH; writes the PNGs and the KTX2)                 |
+| Refresh the KTX2 decoder files                     | `npm run fetch:ktx2-decoder` (copies the files of the installed Babylon version from the CDN to `public/ktx2`) |
 
 Full set before handing over a task: typecheck, lint, format:check, test, build, test:e2e.
 
