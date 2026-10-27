@@ -39,8 +39,12 @@ Full set before handing over a task: typecheck, lint, format:check, test, build,
 
 ## Regression log
 
-| What            | Last done |
-| --------------- | --------- |
-| Full regression | never     |
-| Junk cleanup    | never     |
-| Codebase review | never     |
+| What            | Last done                                                                                            |
+| --------------- | ---------------------------------------------------------------------------------------------------- |
+| Full regression | 2026-10-27 (typecheck, lint, format, 48 unit, build, 9 e2e; A/B on Intel Iris Xe in Chrome and Edge) |
+| Junk cleanup    | 2026-10-27                                                                                           |
+| Codebase review | 2026-10-27 (own review of the whole diff before the first release)                                   |
+
+## Measuring on a real GPU
+
+The e2e tests run on SwiftShader (software), so their numbers mean nothing. For real numbers drive an installed browser with Playwright: `chromium.launch({ channel: 'chrome' })` (or `'msedge'`) uses the hardware GPU even headless. Headless is not locked to the display's refresh rate; for screenshots of the graph use `headless: false`. Do not run builds or tests while a benchmark is running: the numbers are noisy enough already.

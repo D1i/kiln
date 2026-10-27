@@ -24,6 +24,8 @@ export class FrameGraph {
   private readonly context: CanvasRenderingContext2D;
   private cssWidth = 0;
   private cssHeight = 0;
+  private cpuColumns = new Float32Array(0);
+  private intervalColumns = new Float32Array(0);
 
   constructor(
     private readonly buffer: FrameRingBuffer,
@@ -31,7 +33,7 @@ export class FrameGraph {
   ) {
     this.element.className = 'graph';
     this.element.setAttribute('role', 'img');
-    this.element.setAttribute('aria-label', 'Frame time of the last 300 frames');
+    this.element.setAttribute('aria-label', `Frame time of the last ${buffer.capacity} frames`);
     const context = this.element.getContext('2d');
     if (!context) throw new Error('2D canvas is not available');
     this.context = context;
@@ -80,33 +82,51 @@ export class FrameGraph {
     context.textAlign = 'right';
     context.fillText(`${yMax}`, plotLeft - 4, plotTop + 4);
 
-    this.drawSeries((index) => buffer.intervalAt(index), COLOR.interval, 1, xOf, yOf);
-    this.drawSeries((index) => buffer.cpuAt(index), COLOR.cpu, 1.5, xOf, yOf);
+    // More frames than pixels: each pixel column shows the worst frame that falls into it, so no spike is lost.
+    const columns = Math.max(1, Math.floor(plotWidth));
+    if (this.cpuColumns.length !== columns) {
+      this.cpuColumns = new Float32Array(columns);
+      this.intervalColumns = new Float32Array(columns);
+    }
+    this.cpuColumns.fill(-1);
+    this.intervalColumns.fill(-1);
+    for (let index = 0; index < buffer.length; index++) {
+      const column = Math.min(columns - 1, Math.max(0, Math.floor(xOf(index) - plotLeft)));
+      this.cpuColumns[column] = Math.max(this.cpuColumns[column] ?? -1, buffer.cpuAt(index));
+      this.intervalColumns[column] = Math.max(this.intervalColumns[column] ?? -1, buffer.intervalAt(index));
+    }
+
+    this.drawSeries(this.intervalColumns, COLOR.interval, 1, plotLeft, yOf);
+    this.drawSeries(this.cpuColumns, COLOR.cpu, 1.5, plotLeft, yOf);
 
     context.fillStyle = COLOR.slow;
-    for (let index = 0; index < buffer.length; index++) {
-      const value = Math.max(buffer.cpuAt(index), buffer.intervalAt(index));
-      if (value > SLOW_FRAME_MS) context.fillRect(xOf(index) - 1.5, yOf(value) - 1.5, 3, 3);
+    for (let column = 0; column < columns; column++) {
+      const value = Math.max(this.cpuColumns[column] ?? -1, this.intervalColumns[column] ?? -1);
+      if (value > SLOW_FRAME_MS) context.fillRect(plotLeft + column - 1, yOf(value) - 1.5, 3, 3);
     }
 
     this.drawMarkers(xOf, plotTop, plotHeight);
   }
 
   private drawSeries(
-    valueAt: (index: number) => number,
+    columns: Float32Array,
     color: string,
     lineWidth: number,
-    xOf: (index: number) => number,
+    plotLeft: number,
     yOf: (ms: number) => number
   ): void {
-    const { context, buffer } = this;
+    const { context } = this;
     context.strokeStyle = color;
     context.lineWidth = lineWidth;
     context.lineJoin = 'round';
     context.beginPath();
-    for (let index = 0; index < buffer.length; index++) {
-      if (index === 0) context.moveTo(xOf(index), yOf(valueAt(index)));
-      else context.lineTo(xOf(index), yOf(valueAt(index)));
+    let started = false;
+    for (let column = 0; column < columns.length; column++) {
+      const value = columns[column] ?? -1;
+      if (value < 0) continue;
+      if (started) context.lineTo(plotLeft + column + 0.5, yOf(value));
+      else context.moveTo(plotLeft + column + 0.5, yOf(value));
+      started = true;
     }
     context.stroke();
   }

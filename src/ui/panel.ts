@@ -163,10 +163,7 @@ export class Panel {
     );
 
     const legend = el('div', 'hud-sub legend');
-    legend.append(
-      this.legendItem('cpu', 'frame work (beginFrame → endFrame)'),
-      this.legendItem('interval', 'time between frames')
-    );
+    legend.append(this.legendItem('cpu', 'frame work'), this.legendItem('interval', 'time between frames'));
 
     const caption = el('div', 'hud-sub');
     caption.append(

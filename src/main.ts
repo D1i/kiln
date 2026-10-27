@@ -31,7 +31,8 @@ import { compiledEffectCount } from './warmup/effectCounter';
 import { EagerAppearStrategy } from './warmup/eagerAppearStrategy';
 import { LazyAppearStrategy } from './warmup/lazyAppearStrategy';
 
-const FRAMES_IN_GRAPH = 300;
+// 12 appearances take 6 s, which is 360 frames at 60 Hz and over 850 at 144 Hz; the graph squeezes them into its width.
+const FRAMES_IN_GRAPH = 1200;
 const PEAK_WINDOW_MS = 500;
 const MODES: readonly WarmupMode[] = ['off', 'on'];
 
@@ -43,8 +44,14 @@ function showUnsupported(reason: string): void {
   document.body.append(message);
 }
 
-const nextRenderedFrame = (scene: { onAfterRenderObservable: { addOnce(callback: () => void): unknown } }) =>
-  new Promise<void>((resolve) => scene.onAfterRenderObservable.addOnce(() => resolve()));
+async function renderedFrames(
+  scene: { onAfterRenderObservable: { addOnce(callback: () => void): unknown } },
+  count: number
+): Promise<void> {
+  for (let frame = 0; frame < count; frame++) {
+    await new Promise<void>((resolve) => scene.onAfterRenderObservable.addOnce(() => resolve()));
+  }
+}
 
 async function copyToClipboard(text: string): Promise<boolean> {
   try {
@@ -202,15 +209,19 @@ async function start(): Promise<void> {
     panel.setStatus(`Warm-up failed: ${error instanceof Error ? error.message : String(error)}`);
   }
   await new Promise<void>((resolve) => scene.executeWhenReady(resolve));
-  await nextRenderedFrame(scene);
+  await renderedFrames(scene, 1);
 
   const loadMs = performance.now() - loadStartMs;
-  recorder.reset();
   effectsAtReady = compiledEffectCount(engine);
   if (!abState) results.setLoadMs(settings.mode, loadMs);
   refreshLoadTimes();
   refreshCompiled();
   splash.classList.add('hidden');
+
+  // The DOM updates above (splash, labels) cost a few frames of layout. They are not part of any object's
+  // appearance, so the graph starts only after they have settled, and the buttons stay locked until then.
+  await renderedFrames(scene, 20);
+  recorder.reset();
   if (!abState) panel.setLocked(false);
 
   if (abState) await continueAb(abState, loadMs);
