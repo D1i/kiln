@@ -207,6 +207,7 @@ async function start(): Promise<void> {
   try {
     await prefetchTextures(
       textureUrl,
+      settings.textureFormat,
       (done, total) => (splash.textContent = `loading textures… ${done} / ${total}`)
     );
   } catch (error) {
