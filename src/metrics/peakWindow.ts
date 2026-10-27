@@ -27,7 +27,8 @@ interface OpenWindow {
 /**
  * Attributes frame spikes to the object that appeared just before them.
  * Windows never overlap: opening a new one closes the previous one at that moment, so a spike is blamed on exactly
- * one object. A window also closes by itself on the first frame that ends after `windowMs`.
+ * one object. A window also closes by itself once `windowMs` have passed, on the first frame whose predecessor began
+ * after that; a stall that started inside the window is counted even when the frame reporting it ends later.
  */
 export class PeakWindowTracker {
   private active: OpenWindow | null = null;
@@ -49,7 +50,12 @@ export class PeakWindowTracker {
   addSample(sample: FrameSample): void {
     const window = this.active;
     if (!window) return;
-    if (sample.endMs - window.openedAtMs > this.windowMs) {
+    // A stall that began inside the window belongs to it, however late the frame that reports it ends: a
+    // 4096² upload can hold the main thread for most of a second, and the frame that measures it ends well
+    // after the window. So the window closes on the first frame whose predecessor began after it, not on
+    // the first frame that ended after it.
+    const previousBeginMs = sample.endMs - sample.cpuMs - sample.intervalMs;
+    if (previousBeginMs - window.openedAtMs > this.windowMs) {
       this.close();
       return;
     }

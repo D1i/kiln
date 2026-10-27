@@ -25,14 +25,27 @@ describe('PeakWindowTracker', () => {
     ]);
   });
 
-  it('closes by itself on the first frame that ends after the window', () => {
+  it('counts a stall that began inside the window even when its frame ends after it', () => {
     const { tracker, results } = createTracker(500);
     tracker.open('a', 0);
     tracker.addSample(frame(100, 5, 16));
-    tracker.addSample(frame(600, 90, 90));
+    // The previous frame began at 100 - 16 = 84 ms; the main thread then stalled until this frame.
+    tracker.addSample(frame(900, 10, 790));
+
+    expect(results).toHaveLength(0);
+    tracker.close();
+    expect(results[0]?.peakMs).toBe(790);
+  });
+
+  it('closes by itself on the first frame whose predecessor began after the window', () => {
+    const { tracker, results } = createTracker(500);
+    tracker.open('a', 0);
+    tracker.addSample(frame(100, 5, 16));
+    tracker.addSample(frame(600, 10, 480));
+    tracker.addSample(frame(700, 90, 90));
 
     expect(results).toHaveLength(1);
-    expect(results[0]?.peakMs).toBe(16);
+    expect(results[0]?.peakMs).toBe(480);
     expect(tracker.activeSubjectId).toBeNull();
   });
 
