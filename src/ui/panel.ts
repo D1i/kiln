@@ -63,7 +63,7 @@ export class Panel {
     this.parallelAvailable = options.parallelCompileAvailable;
 
     const head = el('div', 'hud-head');
-    head.append(el('span', 'hud-title', 'Warm-up demo'));
+    head.append(el('span', 'hud-title', 'Kiln'));
 
     const switchLabel = el('label', `switch${options.mode === 'on' ? '' : ' off'}`);
     this.warmupSwitch = el('input');

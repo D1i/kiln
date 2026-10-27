@@ -1,8 +1,10 @@
-# Warm-up demo
+# Kiln
+
+Texture and shader warm-up for browser 3D: every material and texture goes through the kiln before it enters the scene.
 
 Why does a 3D scene in the browser stutter the first time a new object appears, and never again? Because the GPU had not seen it yet. This page shows the same 12 objects appearing in one Babylon.js scene with and without **warm-up**, and plots the frame time so the difference is a spike or no spike.
 
-**Live demo:** https://d1i.github.io/warmup/
+**Live demo:** https://d1i.github.io/kiln/
 
 ![Frame time while 12 objects appear: spikes with warm-up off, none with warm-up on](screenshots/off-vs-on.png)
 

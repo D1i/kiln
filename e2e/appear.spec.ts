@@ -31,7 +31,7 @@ async function appearAllWithAuto(page: Page) {
 test('the page loads, shows the panel and reports the loading time', async ({ page }) => {
   const problems = await openPage(page);
 
-  await expect(page.locator('.hud-title')).toHaveText('Warm-up demo');
+  await expect(page.locator('.hud-title')).toHaveText('Kiln');
   await expect(page.locator('.peaks-row:not(.peaks-head)')).toHaveCount(12);
   await expect(page.getByText(/^\d+ ms$/)).toBeVisible();
   expect(problems).toEqual([]);
