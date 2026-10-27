@@ -30,6 +30,23 @@ sequenceDiagram
   U->>S: Appear next: setEnabled(true)
 ```
 
+## Run A/B
+
+```mermaid
+flowchart TD
+  Start[Run A/B: repeats 1/3/5] --> Save[plan off, on, off, on... saved in sessionStorage]
+  Save --> Load[page load: unique shaders, strategy of the step's mode]
+  Load --> Ready[loading screen done, graph cleared]
+  Ready --> Step[settle 1 s, appear 12 objects every 500 ms, close last peak window]
+  Step --> Valid{tab visible, context alive, 12 peaks?}
+  Valid -- no --> Retry[repeat the step, at most 3 times, else abort]
+  Valid -- yes --> Next{more steps?}
+  Next -- yes --> Load
+  Next -- no --> Report[median per object, sums, report text, results into the table]
+```
+
+Every switch (mode, parallel compile) and every A/B step is a page reload, so each measurement starts with an empty engine. `ResultsStore` and the A/B session live in `sessionStorage` and carry the numbers across reloads.
+
 ## Directories
 
 | Path            | Purpose                                                            |
@@ -37,7 +54,8 @@ sequenceDiagram
 | `src/scene`     | Environment (floor, camera, base light) and the 12 guest factories |
 | `src/warmup`    | Material compilation, texture warm-up, appearance control          |
 | `src/metrics`   | Frame recorder, ring buffer, peak windows, A/B report              |
-| `src/bench`     | Run A/B orchestration across page reloads                          |
+| `src/bench`     | A/B plan and session, one benchmark step, median and report text   |
+| `src/app`       | URL settings, results store, storage seam                          |
 | `src/ui`        | DOM panel, canvas-2D frame graph, peaks table, styles              |
 | `src/util`      | Small shared helpers (typed event emitter)                         |
 | `src/env`       | GPU and browser detection                                          |

@@ -58,6 +58,11 @@ export class PeakWindowTracker {
     window.sampleCount++;
   }
 
+  /** Forgets the active window without reporting it. */
+  discard(): void {
+    this.active = null;
+  }
+
   /** Closes the active window, if any; an empty window (no frame rendered) is dropped, not reported as zero. */
   close(): void {
     const window = this.active;

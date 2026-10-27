@@ -71,7 +71,7 @@ export const createMorphGuest: GuestFactory = (context) => {
   const material = createMatteMaterial(context, 'morph-material', new Color3(0.55, 0.85, 0.5));
   mesh.material = material;
 
-  const observer = context.scene.onBeforeRenderObservable.add(() => {
+  context.scene.onBeforeRenderObservable.add(() => {
     const seconds = performance.now() / 1000;
     stretch.influence = 0.55 + 0.45 * Math.sin(seconds * 1.7);
     bulge.influence = 0.55 + 0.45 * Math.sin(seconds * 1.1 + 1);
@@ -80,8 +80,7 @@ export const createMorphGuest: GuestFactory = (context) => {
   return assembleGuest({
     root,
     meshes: [mesh],
-    materials: [material],
-    owned: [manager, { dispose: () => context.scene.onBeforeRenderObservable.remove(observer) }]
+    materials: [material]
   });
 };
 
@@ -118,7 +117,7 @@ export const createSkinnedGuest: GuestFactory = (context) => {
   mesh.material = material;
 
   let appliedAngle = 0;
-  const observer = context.scene.onBeforeRenderObservable.add(() => {
+  context.scene.onBeforeRenderObservable.add(() => {
     const angle = 0.6 * Math.sin(performance.now() / 600);
     upperBone.rotate(Axis.Z, angle - appliedAngle, Space.LOCAL);
     appliedAngle = angle;
@@ -127,7 +126,6 @@ export const createSkinnedGuest: GuestFactory = (context) => {
   return assembleGuest({
     root,
     meshes: [mesh],
-    materials: [material],
-    owned: [skeleton, { dispose: () => context.scene.onBeforeRenderObservable.remove(observer) }]
+    materials: [material]
   });
 };

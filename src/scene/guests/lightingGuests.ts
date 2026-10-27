@@ -57,8 +57,7 @@ export const createShadowGuest: GuestFactory = (context) => {
     root,
     meshes: [caster, receiver],
     materials: [casterMaterial, receiverMaterial],
-    shadowGenerator,
-    owned: [shadowGenerator, light]
+    shadowGenerator
   });
 };
 
@@ -79,5 +78,5 @@ export const createTwoLightsGuest: GuestFactory = (context) => {
   light.intensity = 1.2;
   light.includedOnlyMeshes = [mesh];
 
-  return assembleGuest({ root, meshes: [mesh], materials: [material], owned: [light] });
+  return assembleGuest({ root, meshes: [mesh], materials: [material] });
 };

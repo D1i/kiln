@@ -56,6 +56,23 @@ describe('FrameRecorder', () => {
     expect(recorder.markers).toEqual([]);
   });
 
+  it('starts from nothing after reset, and does not report the window that was open', () => {
+    const recorder = new FrameRecorder(5, 500);
+    const peaks: PeakResult[] = [];
+    recorder.peaks.subscribe((peak) => peaks.push(peak));
+    recorder.markAppearance('plain', '1', 0);
+    recordFrames(recorder, [{ start: 1, end: 3 }]);
+
+    recorder.reset();
+    recorder.finishWindow();
+    recordFrames(recorder, [{ start: 100, end: 102 }]);
+
+    expect(peaks).toEqual([]);
+    expect(recorder.markers).toEqual([]);
+    expect(recorder.buffer.length).toBe(1);
+    expect(recorder.buffer.intervalAt(0)).toBe(0);
+  });
+
   it('ignores endFrame without a beginFrame', () => {
     const recorder = new FrameRecorder(3, 500);
     recorder.endFrame(10);

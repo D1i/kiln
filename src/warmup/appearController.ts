@@ -26,7 +26,7 @@ export class AppearController {
   private autoTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(
-    private strategy: AppearStrategy,
+    private readonly strategy: AppearStrategy,
     private readonly hooks: AppearHooks
   ) {}
 
@@ -71,13 +71,6 @@ export class AppearController {
     if (this.autoTimer === null) return;
     clearTimeout(this.autoTimer);
     this.autoTimer = null;
-    this.changes.emit(this.state);
-  }
-
-  reset(): void {
-    this.stopAuto();
-    this.strategy.reset();
-    this.appearedCount = 0;
     this.changes.emit(this.state);
   }
 }

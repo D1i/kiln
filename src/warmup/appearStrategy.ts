@@ -12,6 +12,4 @@ export interface AppearStrategy {
   prepare(onProgress: (message: string) => void): Promise<void>;
   /** Makes the guest visible. Synchronous: whatever it costs lands in the next frame, which is what we measure. */
   reveal(guestId: GuestId): void;
-  /** Back to the state after `prepare`: every guest hidden. */
-  reset(): void;
 }

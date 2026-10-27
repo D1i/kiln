@@ -53,6 +53,15 @@ export class FrameRecorder {
     this.markersInBuffer.push({ sequence: this.buffer.sequence, label });
   }
 
+  /** Starts from an empty graph, e.g. when loading is over and the numbers of the loading screen are history. */
+  reset(): void {
+    this.buffer.clear();
+    this.markersInBuffer = [];
+    this.tracker.discard();
+    this.frameStartMs = null;
+    this.previousFrameStartMs = null;
+  }
+
   /** Closes the open peak window, e.g. at the end of a benchmark run. */
   finishWindow(): void {
     this.tracker.close();

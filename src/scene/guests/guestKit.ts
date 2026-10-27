@@ -1,6 +1,5 @@
 import type { AbstractMesh } from '@babylonjs/core/Meshes/abstractMesh';
 import type { Material } from '@babylonjs/core/Materials/material';
-import type { BaseTexture } from '@babylonjs/core/Materials/Textures/baseTexture';
 import type { ShadowGenerator } from '@babylonjs/core/Lights/Shadows/shadowGenerator';
 import type { Scene } from '@babylonjs/core/scene';
 import { Color3 } from '@babylonjs/core/Maths/math.color';
@@ -22,9 +21,8 @@ export interface GuestInstance {
   /** Every mesh of the guest, so warm-up can compile its materials against real geometry. */
   meshes: AbstractMesh[];
   materials: Material[];
-  textures: BaseTexture[];
+  textures: Texture[];
   shadowGenerator?: ShadowGenerator;
-  dispose(): void;
 }
 
 export type GuestFactory = (context: GuestContext) => GuestInstance;
@@ -33,10 +31,8 @@ interface GuestParts {
   root: TransformNode;
   meshes: AbstractMesh[];
   materials: Material[];
-  textures?: BaseTexture[];
+  textures?: Texture[];
   shadowGenerator?: ShadowGenerator;
-  /** Lights, observers and other things that are not children of `root` but live and die with the guest. */
-  owned?: Array<{ dispose(): void }>;
 }
 
 export function createGuestRoot(context: GuestContext, id: string): TransformNode {
@@ -46,17 +42,12 @@ export function createGuestRoot(context: GuestContext, id: string): TransformNod
 }
 
 export function assembleGuest(parts: GuestParts): GuestInstance {
-  const owned = parts.owned ?? [];
   return {
     root: parts.root,
     meshes: parts.meshes,
     materials: parts.materials,
     textures: parts.textures ?? [],
-    shadowGenerator: parts.shadowGenerator,
-    dispose() {
-      for (const resource of owned) resource.dispose();
-      parts.root.dispose(false, true);
-    }
+    shadowGenerator: parts.shadowGenerator
   };
 }
 
